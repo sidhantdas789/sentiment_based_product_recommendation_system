@@ -32,6 +32,8 @@ nltk.download('omw-1.4')
 class SentimentRecommenderModel:
 
     ROOT_PATH = "pickle_files/"
+    ZIP_PATH = os.path.join(ROOT_PATH, "user_final_rating.zip")
+    PKL_PATH = os.path.join(ROOT_PATH, "user_final_rating.pkl")
     MODEL_NAME = "sentiment-classification-xg-boost-model.pkl"
     VECTORIZER = "tfidf-vectorizer.pkl"
     RECOMMENDER = "user_final_rating.pkl"
@@ -39,13 +41,13 @@ class SentimentRecommenderModel:
 
     def __init__(self):
         # Unzip the file if the .pkl doesn't exist
-        if not os.path.exists("user_final_rating.pkl"):
-            with zipfile.ZipFile("user_final_rating.zip", 'r') as zip_ref:
-                zip_ref.extractall()
+        if not os.path.exists(self.PKL_PATH):
+            with zipfile.ZipFile(self.ZIP_PATH, 'r') as zip_ref:
+                zip_ref.extractall(self.ROOT_PATH)
 
 
         # Load the pickle file
-        with open("user_final_rating.pkl", "rb") as f:
+        with open(self.PKL_PATH, "rb") as f:
             self.user_final_rating = pickle.load(f)
         self.model = pickle.load(open(
             SentimentRecommenderModel.ROOT_PATH + SentimentRecommenderModel.MODEL_NAME, 'rb'))
