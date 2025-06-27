@@ -19,13 +19,13 @@ nltk.download('omw-1.4')
 
 # Unzip the file if the .pkl doesn't exist
 if not os.path.exists("user_final_rating.pkl"):
-    with zipfile.ZipFile("user_final_rating.zip", 'r') as zip_ref:
-        zip_ref.extractall()
+    with zipfile.ZipFile("user_final_rating.zip", 'r') as zip_ref:
+        zip_ref.extractall()
 
 
 # Load the pickle file
 with open("user_final_rating.pkl", "rb") as f:
-    user_final_rating = pickle.load(f)
+    user_final_rating = pickle.load(f)
 
 
 
@@ -40,13 +40,13 @@ class SentimentRecommenderModel:
     def __init__(self):
         # Unzip the file if the .pkl doesn't exist
         if not os.path.exists("user_final_rating.pkl"):
-            with zipfile.ZipFile("user_final_rating.zip", 'r') as zip_ref:
-                zip_ref.extractall()
+            with zipfile.ZipFile("user_final_rating.zip", 'r') as zip_ref:
+                zip_ref.extractall()
 
 
         # Load the pickle file
         with open("user_final_rating.pkl", "rb") as f:
-            self.user_final_rating = pickle.load(f)
+            self.user_final_rating = pickle.load(f)
         self.model = pickle.load(open(
             SentimentRecommenderModel.ROOT_PATH + SentimentRecommenderModel.MODEL_NAME, 'rb'))
         self.vectorizer = pd.read_pickle(
