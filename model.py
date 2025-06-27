@@ -17,15 +17,15 @@ nltk.download('wordnet')
 nltk.download('omw-1.4')
 
 
-# Unzip the file if the .pkl doesn't exist
-if not os.path.exists("user_final_rating.pkl"):
-    with zipfile.ZipFile("user_final_rating.zip", 'r') as zip_ref:
-        zip_ref.extractall()
+# # Unzip the file if the .pkl doesn't exist
+# if not os.path.exists("user_final_rating.pkl"):
+#     with zipfile.ZipFile("user_final_rating.zip", 'r') as zip_ref:
+#         zip_ref.extractall()
 
 
-# Load the pickle file
-with open("user_final_rating.pkl", "rb") as f:
-    user_final_rating = pickle.load(f)
+# # Load the pickle file
+# with open("user_final_rating.pkl", "rb") as f:
+#     user_final_rating = pickle.load(f)
 
 
 
