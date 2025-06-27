@@ -35,7 +35,7 @@ class SentimentRecommenderModel:
     ZIP_PATH = os.path.join(ROOT_PATH, "user_final_rating.zip")
     PKL_PATH = os.path.join(ROOT_PATH, "user_final_rating.pkl")
     MODEL_NAME = "sentiment-classification-xg-boost-model.pkl"
-    VECTORIZER = "tfidf-vectorizer.pkl"
+    VECTORIZER = "tfidf_vectorizer.pkl"
     RECOMMENDER = "user_final_rating.pkl"
     CLEANED_DATA = "cleaned-data.pkl"
 
