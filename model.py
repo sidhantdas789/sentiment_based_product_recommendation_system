@@ -10,12 +10,31 @@ import string
 import nltk
 import zipfile
 import os
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('wordnet')
-nltk.download('omw-1.4')
 
+try:
+    nltk.data.find.('taggers/stopwords')
+except LookupError:
+    nltk.download('stopwords')
+
+try:
+    nltk.data.find.('taggers/omw-1.4')
+except LookupError:
+    nltk.download('omw-1.4')
+
+try:
+    nltk.data.find.('taggers/averaged_perceptron_tagger')
+except LookupError:
+    nltk.download('averaged_perceptron_tagger')
+
+try:
+    nltk.data.find.('taggers/punkt')
+except LookupError:
+    nltk.download('punkt')
+
+try:
+    nltk.data.find.('taggers/wordnet')
+except LookupError:
+    nltk.download('wordnet')
 
 # # Unzip the file if the .pkl doesn't exist
 # if not os.path.exists("user_final_rating.pkl"):
