@@ -12,27 +12,27 @@ import zipfile
 import os
 
 try:
-    nltk.data.find.('taggers/stopwords')
+    nltk.data.find('taggers/stopwords')
 except LookupError:
     nltk.download('stopwords')
 
 try:
-    nltk.data.find.('taggers/omw-1.4')
+    nltk.data.find('taggers/omw-1.4')
 except LookupError:
     nltk.download('omw-1.4')
 
 try:
-    nltk.data.find.('taggers/averaged_perceptron_tagger')
+    nltk.data.find('taggers/averaged_perceptron_tagger')
 except LookupError:
     nltk.download('averaged_perceptron_tagger')
 
 try:
-    nltk.data.find.('taggers/punkt')
+    nltk.data.find('taggers/punkt')
 except LookupError:
     nltk.download('punkt')
 
 try:
-    nltk.data.find.('taggers/wordnet')
+    nltk.data.find('taggers/wordnet')
 except LookupError:
     nltk.download('wordnet')
 
