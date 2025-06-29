@@ -77,7 +77,7 @@ class SentimentRecommenderModel:
             # preprocess the text before tranforming and predicting
             # filtered_data["reviews_text_cleaned"] = filtered_data["reviews_text"].apply(lambda x: self.preprocess_text(x))
             # transfor the input data using saved tf-idf vectorizer
-            X = self.vectorizer.transform(filtered_data["reviews_text_cleaned"].values.astype(str))
+            X = self.vectorizer.transform(filtered_data["lemmatized_text"].values.astype(str))
             filtered_data["predicted_sentiment"] = self.model.predict(X)
             temp = filtered_data[['id', 'predicted_sentiment']]
             temp_grouped = temp.groupby('id', as_index=False).count()
