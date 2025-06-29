@@ -18,7 +18,7 @@ def safe_nltk_download(resource_path):
     try:
         nltk.data.find(resource_path)
     except LookupError:
-        nltk.download(resource_path.split('/')[-1])
+        nltk.download(resource_path.split('/')[-1], download_dir='/app/nltk_data')
 
 # Safely download required NLTK resources
 safe_nltk_download('tokenizers/punkt')
