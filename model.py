@@ -27,77 +27,67 @@ safe_nltk_download('taggers/averaged_perceptron_tagger')
 safe_nltk_download('corpora/wordnet')
 safe_nltk_download('corpora/omw-1.4')
 
-
-# # Unzip the file if the .pkl doesn't exist
-# if not os.path.exists("user_final_rating.pkl"):
-#     with zipfile.ZipFile("user_final_rating.zip", 'r') as zip_ref:
-#         zip_ref.extractall()
-
-
-# # Load the pickle file
-# with open("user_final_rating.pkl", "rb") as f:
-#     user_final_rating = pickle.load(f)
-
-
-
 class SentimentRecommenderModel:
-
     ROOT_PATH = "pickle_files/"
-    ZIP_PATH = os.path.join(ROOT_PATH, "user_final_rating.zip")
-    PKL_PATH = os.path.join(ROOT_PATH, "user_final_rating.pkl")
-    MODEL_NAME = "sentiment-classification-xg-boost-model.pkl"
+    MODEL = "sentiment-classification-xg-boost-model.pkl"
     VECTORIZER = "tfidf_vectorizer.pkl"
-    RECOMMENDER = "user_final_rating.pkl"
+    USER_MATRIX = "user_final_rating.zip"
     CLEANED_DATA = "cleaned-data.pkl"
 
     def __init__(self):
-        # Unzip the file if the .pkl doesn't exist
-        if not os.path.exists(self.PKL_PATH):
-            with zipfile.ZipFile(self.ZIP_PATH, 'r') as zip_ref:
-                zip_ref.extractall(self.ROOT_PATH)
+        self._model = None
+        self._vectorizer = None
+        self._user_final_rating = None
+        self._df = None
 
+    @property
+    def model(self):
+        if self._model is None:
+            with open(os.path.join(self.ROOT_PATH, self.MODEL), "rb") as f:
+                self._model = pickle.load(f)
+        return self._model
 
-        # Load the pickle file
-        with open(self.PKL_PATH, "rb") as f:
-            self.user_final_rating = pickle.load(f)
-        self.model = pickle.load(open(
-            SentimentRecommenderModel.ROOT_PATH + SentimentRecommenderModel.MODEL_NAME, 'rb'))
-        self.vectorizer = pd.read_pickle(
-            SentimentRecommenderModel.ROOT_PATH + SentimentRecommenderModel.VECTORIZER)
-        #self.user_final_rating = pickle.load(open(
-        #    SentimentRecommenderModel.ROOT_PATH + SentimentRecommenderModel.RECOMMENDER, 'rb'))
-        self.data = pd.read_csv("data/sample30.csv")
-        self.cleaned_data = pickle.load(open(
-            SentimentRecommenderModel.ROOT_PATH + SentimentRecommenderModel.CLEANED_DATA, 'rb'))
-        self.lemmatizer = WordNetLemmatizer()
-        self.stop_words = set(stopwords.words('english'))
+    @property
+    def vectorizer(self):
+        if self._vectorizer is None:
+            with open(os.path.join(self.ROOT_PATH, self.VECTORIZER), "rb") as f:
+                self._vectorizer = pickle.load(f)
+        return self._vectorizer
 
-    """function to get the top product 20 recommendations for the user"""
+    @property
+    @property
+    def user_final_rating(self):
+        if self._user_final_rating is None:
+            zip_path = os.path.join(self.ROOT_PATH, self.USER_MATRIX)
+            with zipfile.ZipFile(zip_path, "r") as zip_ref:
+                pkl_filename = zip_ref.namelist()[0]
+                with zip_ref.open(pkl_filename) as f:
+                    self._user_final_rating = pickle.load(f)
+        return self._user_final_rating
+    USER_MATRIX = "user_final_rating.zip"
+    @property
+    def df(self):
+        if self._df is None:
+            with open(os.path.join(self.ROOT_PATH, self.CLEANED_DATA), "rb") as f:
+                self._df = pickle.load(f)
+        return self._df
 
-    def getRecommendationByUser(self, user):
-        recommedations = []
-        return list(self.user_final_rating.loc[user].sort_values(ascending=False)[0:20].index)
-
-    """function to filter the product recommendations using the sentiment model and get the top 5 recommendations"""
-
-    def getSentimentRecommendations(self, user):
-        if (user in self.user_final_rating.index):
-            # get the product recommedation using the trained ML model
-            recommendations = list(self.user_final_rating.loc[user].sort_values(ascending=False)[0:20].index)
-            filtered_data = self.cleaned_data[self.cleaned_data.id.isin(recommendations)]
-            # preprocess the text before tranforming and predicting
-            # filtered_data["reviews_text_cleaned"] = filtered_data["reviews_text"].apply(lambda x: self.preprocess_text(x))
-            # transfor the input data using saved tf-idf vectorizer
-            X = self.vectorizer.transform(filtered_data["lemmatized_text"].values.astype(str))
-            filtered_data["predicted_sentiment"] = self.model.predict(X)
-            temp = filtered_data[['id', 'predicted_sentiment']]
-            temp_grouped = temp.groupby('id', as_index=False).count()
-            temp_grouped["pos_review_count"] = temp_grouped.id.apply(lambda x: temp[(temp.id == x) & (temp.predicted_sentiment == 1)]["predicted_sentiment"].count())
-            temp_grouped["total_review_count"] = temp_grouped['predicted_sentiment']
-            temp_grouped['pos_sentiment_percent'] = np.round(temp_grouped["pos_review_count"]/temp_grouped["total_review_count"]*100, 2)
-            sorted_products = temp_grouped.sort_values('pos_sentiment_percent', ascending=False)[0:5]
-            return pd.merge(self.data, sorted_products, on="id")[["name", "brand", "manufacturer", "pos_sentiment_percent"]].drop_duplicates().sort_values(['pos_sentiment_percent', 'name'], ascending=[False, True])
-
-        else:
+    def get_sentiment_recommendations(self, user):
+        if user not in self.user_final_rating.index:
             print(f"User name {user} doesn't exist")
             return None
+
+        recommendations = list(self.user_final_rating.loc[user].sort_values(ascending=False)[0:20].index)
+        temp = self.df[self.df.id.isin(recommendations)].copy()
+        X = self.vectorizer.transform(temp["lemmatized_text"].values.astype(str))
+        temp["predicted_sentiment"] = self.model.predict(X)
+        temp = temp[["name", "predicted_sentiment"]]
+        temp_grouped = temp.groupby("name", as_index=False).count()
+        temp_grouped["pos_review_count"] = temp_grouped["name"].apply(
+            lambda x: temp[(temp.name == x) & (temp.predicted_sentiment == 1)]["predicted_sentiment"].count()
+        )
+        temp_grouped["total_review_count"] = temp_grouped["predicted_sentiment"]
+        temp_grouped["pos_sentiment_percent"] = (
+            temp_grouped["pos_review_count"] / temp_grouped["total_review_count"] * 100
+        ).round(2)
+        return temp_grouped.sort_values("pos_sentiment_percent", ascending=False)
