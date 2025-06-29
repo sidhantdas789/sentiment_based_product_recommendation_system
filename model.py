@@ -55,7 +55,6 @@ class SentimentRecommenderModel:
         return self._vectorizer
 
     @property
-    @property
     def user_final_rating(self):
         if self._user_final_rating is None:
             zip_path = os.path.join(self.ROOT_PATH, self.USER_MATRIX)
@@ -64,7 +63,7 @@ class SentimentRecommenderModel:
                 with zip_ref.open(pkl_filename) as f:
                     self._user_final_rating = pickle.load(f)
         return self._user_final_rating
-    USER_MATRIX = "user_final_rating.zip"
+   
     @property
     def df(self):
         if self._df is None:
@@ -90,4 +89,4 @@ class SentimentRecommenderModel:
         temp_grouped["pos_sentiment_percent"] = (
             temp_grouped["pos_review_count"] / temp_grouped["total_review_count"] * 100
         ).round(2)
-        return temp_grouped.sort_values("pos_sentiment_percent", ascending=False)
+        return temp_grouped.sort_values("pos_sentiment_percent", ascending=False)[0:5]

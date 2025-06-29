@@ -19,7 +19,7 @@ def prediction():
     user = request.form['userName']
     # convert text to lowercase
     user = user.lower()
-    items = sentiment_model.getSentimentRecommendations(user)
+    items = sentiment_model.get_sentiment_recommendations(user)
 
     if(items is not None):
         print(f"retrieving items....{len(items)}")
