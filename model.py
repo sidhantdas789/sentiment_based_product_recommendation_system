@@ -11,30 +11,22 @@ import nltk
 import zipfile
 import os
 
-try:
-    nltk.data.find('taggers/stopwords')
-except LookupError:
-    nltk.download('stopwords')
+def safe_nltk_download(resource_path):
+    """
+    Checks if the NLTK resource exists, and downloads it only if missing.
+    """
+    try:
+        nltk.data.find(resource_path)
+    except LookupError:
+        nltk.download(resource_path.split('/')[-1])
 
-try:
-    nltk.data.find('taggers/omw-1.4')
-except LookupError:
-    nltk.download('omw-1.4')
+# Safely download required NLTK resources
+safe_nltk_download('tokenizers/punkt')
+safe_nltk_download('corpora/stopwords')
+safe_nltk_download('taggers/averaged_perceptron_tagger')
+safe_nltk_download('corpora/wordnet')
+safe_nltk_download('corpora/omw-1.4')
 
-try:
-    nltk.data.find('taggers/averaged_perceptron_tagger')
-except LookupError:
-    nltk.download('averaged_perceptron_tagger')
-
-try:
-    nltk.data.find('taggers/punkt')
-except LookupError:
-    nltk.download('punkt')
-
-try:
-    nltk.data.find('taggers/wordnet')
-except LookupError:
-    nltk.download('wordnet')
 
 # # Unzip the file if the .pkl doesn't exist
 # if not os.path.exists("user_final_rating.pkl"):
