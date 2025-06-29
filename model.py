@@ -8,24 +8,26 @@ import numpy as np
 import re
 import string
 import nltk
+nltk.data.path.append('./nltk_data')
 import zipfile
 import os
 
-def safe_nltk_download(resource_path):
-    """
-    Checks if the NLTK resource exists, and downloads it only if missing.
-    """
+# Safely download required NLTK resources
+
+def ensure_nltk_resource(resource_path):
     try:
         nltk.data.find(resource_path)
     except LookupError:
-        nltk.download(resource_path.split('/')[-1], download_dir='/app/nltk_data')
+        raise LookupError(
+            f"Missing NLTK resource: {resource_path}. "
+            f"Ensure it is downloaded and available in ./nltk_data."
+        )
 
-# Safely download required NLTK resources
-safe_nltk_download('tokenizers/punkt')
-safe_nltk_download('corpora/stopwords')
-safe_nltk_download('taggers/averaged_perceptron_tagger')
-safe_nltk_download('corpora/wordnet')
-safe_nltk_download('corpora/omw-1.4')
+ensure_nltk_resource('tokenizers/punkt')
+ensure_nltk_resource('corpora/stopwords')
+ensure_nltk_resource('taggers/averaged_perceptron_tagger')
+ensure_nltk_resource('corpora/wordnet')
+ensure_nltk_resource('corpora/omw-1.4')
 
 class SentimentRecommenderModel:
     ROOT_PATH = "pickle_files/"
