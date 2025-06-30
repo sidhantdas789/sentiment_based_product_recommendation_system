@@ -1,0 +1,7 @@
+*.csv
+*.pkl
+*.zip
+*.ipynb
+__pycache__/
+data/
+pickle_files/

@@ -11,6 +11,8 @@ import nltk
 nltk.data.path.append('./nltk_data')
 import zipfile
 import os
+import requests
+from io import BytesIO
 
 import nltk
 import os
@@ -38,11 +40,10 @@ def download_nltk_data_from_file(file_path='nltk.txt'):
 download_nltk_data_from_file()
 
 class SentimentRecommenderModel:
-    ROOT_PATH = "pickle_files/"
-    MODEL = "sentiment-classification-xg-boost-model.pkl"
-    VECTORIZER = "tfidf_vectorizer.pkl"
-    USER_MATRIX = "user_final_rating.zip"
-    CLEANED_DATA = "cleaned-data.pkl"
+    MODEL_URL = "https://raw.githubusercontent.com/sidhantdas789/sentiment_based_product_recommendation_system/main/pickle_files/sentiment-classification-xg-boost-model.pkl"
+    VECTORIZER_URL = "https://raw.githubusercontent.com/sidhantdas789/sentiment_based_product_recommendation_system/main/pickle_files/tfidf_vectorizer.pkl"
+    CLEANED_DATA_URL = "https://raw.githubusercontent.com/sidhantdas789/sentiment_based_product_recommendation_system/main/pickle_files/cleaned-data.pkl"
+    USER_MATRIX_URL = "https://github.com/sidhantdas789/sentiment_based_product_recommendation_system/raw/main/pickle_files/user_final_rating.zip"
 
     def __init__(self):
         self._model = None
@@ -53,33 +54,33 @@ class SentimentRecommenderModel:
     @property
     def model(self):
         if self._model is None:
-            with open(os.path.join(self.ROOT_PATH, self.MODEL), "rb") as f:
-                self._model = pickle.load(f)
+            r = requests.get(self.MODEL_URL)
+            self._model = pickle.load(BytesIO(r.content))
         return self._model
 
     @property
     def vectorizer(self):
         if self._vectorizer is None:
-            with open(os.path.join(self.ROOT_PATH, self.VECTORIZER), "rb") as f:
-                self._vectorizer = pickle.load(f)
+            r = requests.get(self.VECTORIZER_URL)
+            self._vectorizer = pickle.load(BytesIO(r.content))
         return self._vectorizer
+
+    @property
+    def df(self):
+        if self._df is None:
+            r = requests.get(self.CLEANED_DATA_URL)
+            self._df = pickle.load(BytesIO(r.content))
+        return self._df
 
     @property
     def user_final_rating(self):
         if self._user_final_rating is None:
-            zip_path = os.path.join(self.ROOT_PATH, self.USER_MATRIX)
-            with zipfile.ZipFile(zip_path, "r") as zip_ref:
+            r = requests.get(self.USER_MATRIX_URL)
+            with zipfile.ZipFile(BytesIO(r.content)) as zip_ref:
                 pkl_filename = zip_ref.namelist()[0]
                 with zip_ref.open(pkl_filename) as f:
                     self._user_final_rating = pickle.load(f)
         return self._user_final_rating
-   
-    @property
-    def df(self):
-        if self._df is None:
-            with open(os.path.join(self.ROOT_PATH, self.CLEANED_DATA), "rb") as f:
-                self._df = pickle.load(f)
-        return self._df
 
     def get_sentiment_recommendations(self, user):
         if user not in self.user_final_rating.index:
