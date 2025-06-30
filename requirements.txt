@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 appnope==0.1.4
 asttokens==2.4.1
 backcall==0.2.0
@@ -67,7 +66,6 @@ wheel==0.42.0
 wordcloud==1.9.3
 xgboost==2.0.3
 zipp==3.17.0
-=======
 ansicon==1.89.0
 awscli==1.40.45
 awsebcli==3.25
@@ -95,10 +93,7 @@ pathspec==0.12.1
 pyasn1==0.6.1
 pycparser==2.22
 PyNaCl==1.5.0
-# pypiwin32==223
 python-dateutil==2.9.0.post0
-# pythonnet==3.0.5
-# pywin32==310
 PyYAML==6.0.2
 requests==2.32.4
 rsa==4.7.2
@@ -111,4 +106,3 @@ urllib3==1.26.20
 wcwidth==0.2.13
 wrapt==1.17.2
 gunicorn
->>>>>>> 933c2e2cadda1752bacde398e61ecb6201469de0
