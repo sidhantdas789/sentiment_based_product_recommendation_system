@@ -3,7 +3,6 @@
 *.pkl
 *.zip
 *.json
-*.txt
 data/
 datasets/
 pickle_files/
