@@ -12,22 +12,30 @@ nltk.data.path.append('./nltk_data')
 import zipfile
 import os
 
-# Safely download required NLTK resources
+import nltk
+import os
 
-def ensure_nltk_resource(resource_path):
-    try:
-        nltk.data.find(resource_path)
-    except LookupError:
-        raise LookupError(
-            f"Missing NLTK resource: {resource_path}. "
-            f"Ensure it is downloaded and available in ./nltk_data."
-        )
+def download_nltk_data_from_file(file_path='nltk.txt'):
+    if not os.path.exists(file_path):
+        print(f"'{file_path}' not found. Skipping NLTK data download.")
+        return
 
-ensure_nltk_resource('tokenizers/punkt')
-ensure_nltk_resource('corpora/stopwords')
-ensure_nltk_resource('taggers/averaged_perceptron_tagger')
-ensure_nltk_resource('corpora/wordnet')
-ensure_nltk_resource('corpora/omw-1.4')
+    with open(file_path, 'r') as f:
+        resources = [line.strip() for line in f if line.strip()]
+
+    for resource in resources:
+        try:
+            # Determine the correct path based on resource type
+            if resource == 'punkt':
+                nltk.data.find(f'tokenizers/{resource}')
+            else:
+                nltk.data.find(f'corpora/{resource}')
+        except LookupError:
+            print(f"Downloading missing NLTK resource: {resource}")
+            nltk.download(resource)
+
+# Call the function at the start of your app
+download_nltk_data_from_file()
 
 class SentimentRecommenderModel:
     ROOT_PATH = "pickle_files/"
