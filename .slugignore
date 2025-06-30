@@ -1,7 +1,10 @@
 *.csv
+*.ipynb
 *.pkl
 *.zip
-*.ipynb
-__pycache__/
+*.json
+*.txt
 data/
+datasets/
 pickle_files/
+__pycache__/
